@@ -1,7 +1,7 @@
 FROM centos:6
 RUN sed --expression '/tsflags=nodocs/d' --in-place /etc/yum.conf
 COPY epel6.repo /etc/yum.repos.d/epel.repo
-RUN yum --assumeyes install @buildsys-build rpmdevtools python2-sh sudo; \
+RUN yum --assumeyes install @buildsys-build rpmdevtools python2-sh sudo rpmlint; \
     yum clean all
 COPY plugin.py /
 RUN useradd --uid 1000 drone

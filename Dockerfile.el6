@@ -6,7 +6,7 @@ RUN yum --disablerepo '*' repolist; \
     yum-config-manager --enable rhel-6-server{,-optional,-extras}-rpms; \
     yum clean all
 COPY epel6.repo /etc/yum.repos.d/epel.repo
-RUN yum --assumeyes install @buildsys-build rpmdevtools python2-sh sudo; \
+RUN yum --assumeyes install @buildsys-build rpmdevtools python2-sh sudo rpmlint; \
     yum clean all
 COPY plugin.py /
 RUN useradd --uid 1000 drone
