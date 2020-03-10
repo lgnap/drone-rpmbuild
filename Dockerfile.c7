@@ -12,7 +12,8 @@ RUN yum --setopt=skip_missing_names_on_install=False --assumeyes install \
     python2-sh \
     sudo \
     rpmlint \
-    rpm-sign && \
+    rpm-sign \
+    expect && \
     yum clean all
 
 COPY plugin.py /
