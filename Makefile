@@ -1,4 +1,4 @@
-.PHONY: help build-rhel6 build-rhel7 build-centos6 build-centos7
+.PHONY: help build-centos6 build-centos7
 .DEFAULT_GOAL := help
 
 build-centos6: ## Build CentOs 6
