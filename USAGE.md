@@ -62,6 +62,17 @@ docker run --rm \
   rpmbuild:el7
 ```
 
+Disable the get & build sources process (rely directly on `BUILD` folder content)
+
+
+```diff
+ docker run --rm \
+   -e DRONE_REPO_NAME=beef \
+   -e DRONE_WORKSPACE=/tmp/beef \
++  -e PLUGIN_DISABLE_GET_BUILD_SOURCES=1 \
+   rpmbuild:el7
+```
+
 Specify an alternate paths (relative to `${DRONE_WORKSPACE}`) for the spec file and/or sources directory:
 
 ```diff

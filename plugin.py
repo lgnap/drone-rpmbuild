@@ -3,12 +3,13 @@
 """
 drone rpmbuild plugin
 
-PLUGIN_SPEC             path to spec file
-PLUGIN_SOURCES          path to sources directory
-PLUGIN_DEFINE           extra definitions
-PLUGIN_WITH             bcond_with flags
-PLUGIN_WITHOUT          bcond_without flags
-PLUGIN_REPOS            additional repos to build with
+PLUGIN_SPEC                     path to spec file
+PLUGIN_DISABLE_GET_BUILD_SOURCES      get & build sources
+PLUGIN_SOURCES                  path to sources directory
+PLUGIN_DEFINE                   extra definitions
+PLUGIN_WITH                     bcond_with flags
+PLUGIN_WITHOUT                  bcond_without flags
+PLUGIN_REPOS                    additional repos to build with
 """
 
 from __future__ import print_function
@@ -93,31 +94,31 @@ if plugin_repos:
             curl.perform()
             curl.close()
 
+disable_get_build_sources = os.environ.get('PLUGIN_DISABLE_GET_BUILD_SOURCES')
+if not disable_get_build_sources:
+    print('==> get sources')
+    sys.stdout.flush()
+    sh.spectool('--get-files', '--directory', sources, spec, _fg=True)
 
-print('==> get sources')
-sys.stdout.flush()
-sh.spectool('--get-files', '--directory', sources, spec, _fg=True)
-
-
-print('==> build SRPM')
-sys.stdout.flush()
-rpmbuild = sh.rpmbuild.bake('-bs')
-for definition in definitions.items():
-    rpmbuild = rpmbuild.bake('--define', ' '.join(definition))
-for bcond_with in bcond_withs:
-    rpmbuild = rpmbuild.bake('--with', bcond_with)
-for bcond_without in bcond_withouts:
-    rpmbuild = rpmbuild.bake('--without', bcond_without)
-rpmbuild(spec, _fg=True)
-rpm_files = [glob(os.path.join(workspace, 'SRPMS', '*.src.rpm'))[0]]
-
-
-print('==> install build requirements')
-sys.stdout.flush()
-if sh.which('dnf'):
-    sh.sudo.dnf.builddep('--assumeyes', rpm_files[0], _fg=True)
+    print('==> build SRPM')
+    sys.stdout.flush()
+    rpmbuild = sh.rpmbuild.bake('-bs')
+    for definition in definitions.items():
+        rpmbuild = rpmbuild.bake('--define', ' '.join(definition))
+    for bcond_with in bcond_withs:
+        rpmbuild = rpmbuild.bake('--with', bcond_with)
+    for bcond_without in bcond_withouts:
+        rpmbuild = rpmbuild.bake('--without', bcond_without)
+    rpmbuild(spec, _fg=True)
+    rpm_files = [glob(os.path.join(workspace, 'SRPMS', '*.src.rpm'))[0]]
+    print('==> install build requirements')
+    sys.stdout.flush()
+    if sh.which('dnf'):
+        sh.sudo.dnf.builddep('--assumeyes', rpm_files[0], _fg=True)
+    else:
+        sh.sudo('yum-builddep', '--assumeyes', rpm_files[0], _fg=True)
 else:
-    sh.sudo('yum-builddep', '--assumeyes', rpm_files[0], _fg=True)
+    rpm_files = []
 
 
 print('==> build RPMs')
