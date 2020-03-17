@@ -16,7 +16,7 @@ RUN yum --setopt=skip_missing_names_on_install=False --assumeyes install \
 
 COPY rpm-sign.exp /usr/bin/
 
-ENV PASSPHRASE
+ENV PASSPHRASE ''
 
 COPY plugin.py /
 
